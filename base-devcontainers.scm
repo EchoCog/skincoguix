@@ -85,13 +85,26 @@
     '("stable" "latest")
     '(8 . (feature_count package_complexity build_time))))
 
+;; Shepherd service management profile
+(define shepherd-packaging-profile
+  (make-build-profile
+    "shepherd-packaging"
+    "Shepherd OpenCog Packaging Environment"
+    "GNU Shepherd service-managed environment for OpenCog package development and testing"
+    "guix-system"
+    '("shepherd" "service-management" "packaging" "reproducible" "scheme-scripting")
+    '("shepherd" "guile" "gcc-toolchain" "cmake" "pkg-config" "git" "opencog-atomspace" "opencog-cogutil" "opencog-opencog")
+    '("stable" "latest")
+    '(9 . (feature_count package_complexity build_time))))
+
 ;; Build profile catalog
 (define build-profile-catalog
   (list opencog-dev-profile
         atomspace-minimal-profile
         cognitive-agent-profile
         research-experimental-profile
-        docker-cognitive-profile))
+        docker-cognitive-profile
+        shepherd-packaging-profile))
 
 ;; Guix manifest generation
 (define (profile->guix-manifest profile)
