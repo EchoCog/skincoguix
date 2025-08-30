@@ -204,3 +204,156 @@
         skz-submission-assistant-mgmt
         skz-editorial-orchestration-mgmt
         skz-atomspace-bridge-mgmt))
+
+;; =============================================================================
+;; MULTISCALE SKIN MODEL HYPERGRAPH SCHEMA EXTENSIONS
+;; =============================================================================
+
+;; Biological scale node definition
+(define (biological-scale-node scale-name scale-level entities-count temporal-resolution)
+  (list 'BIOLOGICAL-SCALE scale-name
+        (list 'SCALE-LEVEL scale-level)
+        (list 'ENTITIES-COUNT entities-count)
+        (list 'TEMPORAL-RESOLUTION temporal-resolution)
+        (list 'TENSOR-SHAPE (list scale-level entities-count temporal-resolution))
+        (list 'CREATED-TIME (current-time))))
+
+;; Biological entity node definition
+(define (biological-entity-node entity-name entity-type scale-membership properties)
+  (list 'BIOLOGICAL-ENTITY entity-name
+        (list 'ENTITY-TYPE entity-type)
+        (list 'SCALE-MEMBERSHIP scale-membership)
+        (list 'PROPERTIES properties)
+        (list 'TENSOR-SHAPE (list (length properties) scale-membership))
+        (list 'CREATED-TIME (current-time))))
+
+;; Cross-scale interaction link definition
+(define (cross-scale-link from-scale to-scale interaction-type strength temporal-dynamics)
+  (list 'CROSS-SCALE-LINK
+        (list 'FROM-SCALE from-scale)
+        (list 'TO-SCALE to-scale)
+        (list 'INTERACTION-TYPE interaction-type)
+        (list 'STRENGTH strength)
+        (list 'TEMPORAL-DYNAMICS temporal-dynamics)
+        (list 'TENSOR-SHAPE (list strength temporal-dynamics))))
+
+;; Multiscale coordination node definition
+(define (multiscale-coordination-node coordination-id active-scales data-flow-patterns)
+  (list 'MULTISCALE-COORDINATION coordination-id
+        (list 'ACTIVE-SCALES active-scales)
+        (list 'DATA-FLOW-PATTERNS data-flow-patterns)
+        (list 'TENSOR-SHAPE (list (length active-scales) (length data-flow-patterns)))
+        (list 'TIMESTAMP (current-time))))
+
+;; Example multiscale skin model schema instances
+(define molecular-scale-schema
+  (biological-scale-node "molecular-scale" 1 250 0.001)) ; picoseconds
+
+(define cellular-scale-schema
+  (biological-scale-node "cellular-scale" 2 150 0.1)) ; seconds
+
+(define tissue-scale-schema
+  (biological-scale-node "tissue-scale" 3 75 60.0)) ; minutes
+
+(define organ-scale-schema
+  (biological-scale-node "organ-scale" 4 25 3600.0)) ; hours
+
+;; Example biological entities
+(define keratin-entity
+  (biological-entity-node "keratin"
+                         "structural-protein"
+                         1 ; molecular scale
+                         '("tensile-strength" "flexibility" "hydrophobic")))
+
+(define keratinocyte-entity
+  (biological-entity-node "keratinocyte"
+                         "epithelial-cell"
+                         2 ; cellular scale
+                         '("differentiation" "migration" "barrier-formation")))
+
+(define epidermis-entity
+  (biological-entity-node "epidermis"
+                         "epithelial-tissue"
+                         3 ; tissue scale
+                         '("barrier-function" "thickness" "turnover-rate")))
+
+(define skin-organ-entity
+  (biological-entity-node "skin-organ"
+                         "integumentary-organ"
+                         4 ; organ scale
+                         '("thermoregulation" "sensation" "protection")))
+
+;; Cross-scale interaction links
+(define molecular-cellular-link
+  (cross-scale-link "molecular-scale" "cellular-scale" "aggregation" 0.8 10.0))
+
+(define cellular-tissue-link
+  (cross-scale-link "cellular-scale" "tissue-scale" "organization" 0.9 100.0))
+
+(define tissue-organ-link
+  (cross-scale-link "tissue-scale" "organ-scale" "integration" 0.85 1000.0))
+
+;; Multiscale coordination instance
+(define skin-multiscale-coordination
+  (multiscale-coordination-node "skin-model-coordination"
+                               '("molecular" "cellular" "tissue" "organ")
+                               '("upscaling" "downscaling" "feedback")))
+
+;; Cognitive-biological integration node definition
+(define (cognitive-biological-node integration-id cognitive-components biological-components integration-metrics)
+  (list 'COGNITIVE-BIOLOGICAL integration-id
+        (list 'COGNITIVE-COMPONENTS cognitive-components)
+        (list 'BIOLOGICAL-COMPONENTS biological-components)
+        (list 'INTEGRATION-METRICS integration-metrics)
+        (list 'TENSOR-SHAPE (list (length cognitive-components) 
+                                  (length biological-components) 
+                                  (length integration-metrics)))
+        (list 'TIMESTAMP (current-time))))
+
+;; Example cognitive-biological integration
+(define cognitive-skin-integration
+  (cognitive-biological-node "cognitive-skin-integration"
+                            '("registry-discovery" "profile-extraction" "artifact-synthesis")
+                            '("molecular-scale-agent" "cellular-scale-agent" "tissue-scale-agent" "organ-scale-agent")
+                            '("accuracy" "efficiency" "biological-fidelity")))
+
+;; Enhanced ecosystem analysis including biological components
+(define (analyze-enhanced-ecosystem packages agents biological-scales biological-entities)
+  (list 'ENHANCED-ECOSYSTEM-ANALYSIS
+        (list 'PACKAGE-COUNT (length packages))
+        (list 'AGENT-COUNT (length agents))
+        (list 'BIOLOGICAL-SCALES-COUNT (length biological-scales))
+        (list 'BIOLOGICAL-ENTITIES-COUNT (length biological-entities))
+        (list 'COMPLEXITY-SCORE (+ (length packages) 
+                                   (* 2 (length agents))
+                                   (* 3 (length biological-scales))
+                                   (length biological-entities)))
+        (list 'INTEGRATION-LEVEL 'deep)
+        (list 'TIMESTAMP (current-time))))
+
+;; Export enhanced ecosystem state including multiscale skin model
+(define (export-enhanced-ecosystem-state filename packages agents biological-scales biological-entities)
+  (with-output-to-file filename
+    (lambda ()
+      (display ";; Generated Enhanced Ecosystem State with Multiscale Skin Model\n")
+      (display (analyze-enhanced-ecosystem packages agents biological-scales biological-entities))
+      (display "\n\n;; Biological Scale Schemas\n")
+      (for-each (lambda (scale) (display scale) (newline)) biological-scales)
+      (display "\n;; Biological Entity Schemas\n")
+      (for-each (lambda (entity) (display entity) (newline)) biological-entities))))
+
+;; Complete multiscale skin model ecosystem
+(define multiscale-skin-ecosystem
+  (list molecular-scale-schema
+        cellular-scale-schema
+        tissue-scale-schema
+        organ-scale-schema
+        keratin-entity
+        keratinocyte-entity
+        epidermis-entity
+        skin-organ-entity
+        molecular-cellular-link
+        cellular-tissue-link
+        tissue-organ-link
+        skin-multiscale-coordination
+        cognitive-skin-integration))
