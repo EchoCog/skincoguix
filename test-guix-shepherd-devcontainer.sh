@@ -1,8 +1,9 @@
 #!/bin/bash
 # Test script for Guix Shepherd devcontainer integration
 
+# Note: Using explicit error handling instead of set -e for comprehensive testing
 # Don't exit on first error - we want to run all tests
-set +e
+# set +e
 
 echo "🧪 Testing Guix Shepherd devcontainer setup..."
 
