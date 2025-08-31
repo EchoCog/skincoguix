@@ -329,128 +329,141 @@ jobs:
           sudo ldconfig
           cd ../../..
 
-      # (Optional) Package Components
-      - name: Package Components
-        if: github.ref == 'refs/heads/main'
+      # 21. Build and Install koboldcpp
+      - name: Build and Install koboldcpp
         run: |
-          # cogutil Packaging
-          cd repos/cogutil/build
-          make package || echo "cogutil package target not defined."
+          cd repos/koboldcpp
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
           cd ../../..
+
+      # (Optional) Package Components
+#      - name: Package Components
+#        if: github.ref == 'refs/heads/main'
+#        run: |
+          # cogutil Packaging
+#          cd repos/cogutil/build
+#          make package || echo "cogutil package target not defined."
+#          cd ../../..
 
           # atomspace Packaging
-          cd repos/atomspace/build
-          make package || echo "atomspace package target not defined."
-          cd ../../..
+#          cd repos/atomspace/build
+#          make package || echo "atomspace package target not defined."
+#          cd ../../..
 
           # atomspace-storage Packaging
-          cd repos/atomspace-storage/build
-          make package || echo "atomspace-storage package target not defined."
-          cd ../../..
+ #         cd repos/atomspace-storage/build
+ #         make package || echo "atomspace-storage package target not defined."
+ #         cd ../../..
 
           # atomspace-rocks Packaging
-          cd repos/atomspace-rocks/build
-          make package || echo "atomspace-rocks package target not defined."
-          cd ../../..
+ #         cd repos/atomspace-rocks/build
+ #         make package || echo "atomspace-rocks package target not defined."
+ #         cd ../../..
 
           # atomspace-restful Packaging
-          cd repos/atomspace-restful/build
-          make package || echo "atomspace-restful package target not defined."
-          cd ../../..
+#          cd repos/atomspace-restful/build
+#          make package || echo "atomspace-restful package target not defined."
+#          cd ../../..
 
           # cogserver Packaging
-          cd repos/cogserver/build
-          make package || echo "cogserver package target not defined."
-          cd ../../..
+#          cd repos/cogserver/build
+#          make package || echo "cogserver package target not defined."
+#          cd ../../..
 
           # unify Packaging
-          cd repos/unify/build
-          make package || echo "unify package target not defined."
-          cd ../../..
+#          cd repos/unify/build
+#          make package || echo "unify package target not defined."
+#          cd ../../..
 
           # ure Packaging
-          cd repos/ure/build
-          make package || echo "ure package target not defined."
-          cd ../../..
+#          cd repos/ure/build
+#          make package || echo "ure package target not defined."
+#          cd ../../..
 
           # spacetime Packaging
-          cd repos/spacetime/build
-          make package || echo "spacetime package target not defined."
-          cd ../../..
+#          cd repos/spacetime/build
+#          make package || echo "spacetime package target not defined."
+#          cd ../../..
 
           # attention Packaging
-          cd repos/attention/build
-          make package || echo "attention package target not defined."
-          cd ../../..
+#          cd repos/attention/build
+#          make package || echo "attention package target not defined."
+#          cd ../../..
 
           # miner Packaging
-          cd repos/miner/build
-          make package || echo "miner package target not defined."
-          cd ../../..
+#          cd repos/miner/build
+#          make package || echo "miner package target not defined."
+#          cd ../../..
 
           # pln Packaging
-          cd repos/pln/build
-          make package || echo "pln package target not defined."
-          cd ../../..
+#          cd repos/pln/build
+#          make package || echo "pln package target not defined."
+#          cd ../../..
 
           # moses Packaging
-          cd repos/moses/build
-          make package || echo "moses package target not defined."
-          cd ../../..
+#          cd repos/moses/build
+#          make package || echo "moses package target not defined."
+#          cd ../../..
 
           # asmoses Packaging
-          cd repos/asmoses/build
-          make package || echo "asmoses package target not defined."
-          cd ../../..
+#          cd repos/asmoses/build
+#          make package || echo "asmoses package target not defined."
+#          cd ../../..
 
           # lg-atomese Packaging
-          cd repos/lg-atomese/build
-          make package || echo "lg-atomese package target not defined."
-          cd ../../..
+#          cd repos/lg-atomese/build
+#          make package || echo "lg-atomese package target not defined."
+#          cd ../../..
 
           # learn Packaging
-          cd repos/learn/build
-          make package || echo "learn package target not defined."
-          cd ../../..
+#          cd repos/learn/build
+#          make package || echo "learn package target not defined."
+#          cd ../../..
 
           # pattern-index Packaging
-          cd repos/pattern-index/build
-          make package || echo "pattern-index package target not defined."
-          cd ../../..
+#          cd repos/pattern-index/build
+#          make package || echo "pattern-index package target not defined."
+#          cd ../../..
 
           # vision Packaging
-          cd repos/vision/build
-          make package || echo "vision package target not defined."
-          cd ../../..
+#          cd repos/vision/build
+#          make package || echo "vision package target not defined."
+#          cd ../../..
 
           # opencog Packaging
-          cd repos/opencog/build
-          make package || echo "opencog package target not defined."
-          cd ../../..
+#          cd repos/opencog/build
+#          make package || echo "opencog package target not defined."
+#          cd ../../..
 
       # Upload Build Artifacts
-      - name: Upload Build Artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            repos/cogutil/build/
-            repos/atomspace/build/
-            repos/atomspace-storage/build/
-            repos/atomspace-rocks/build/
-            repos/atomspace-restful/build/
-            repos/cogserver/build/
-            repos/unify/build/
-            repos/ure/build/
-            repos/spacetime/build/
-            repos/attention/build/
-            repos/miner/build/
-            repos/pln/build/
-            repos/moses/build/
-            repos/asmoses/build/
-            repos/lg-atomese/build/
-            repos/learn/build/
-            repos/pattern-index/build/
-            repos/vision/build/
-            repos/opencog/build/
+#      - name: Upload Build Artifacts
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: build-artifacts
+#          path: |
+#            repos/cogutil/build/
+#            repos/atomspace/build/
+#            repos/atomspace-storage/build/
+#            repos/atomspace-rocks/build/
+#            repos/atomspace-restful/build/
+#            repos/cogserver/build/
+#            repos/unify/build/
+#            repos/ure/build/
+#            repos/spacetime/build/
+#            repos/attention/build/
+#            repos/miner/build/
+#            repos/pln/build/
+#            repos/moses/build/
+#            repos/asmoses/build/
+#            repos/lg-atomese/build/
+#            repos/learn/build/
+#            repos/pattern-index/build/
+#            repos/vision/build/
+#            repos/opencog/build/
