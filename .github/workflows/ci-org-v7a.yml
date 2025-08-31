@@ -68,9 +68,13 @@ jobs:
       # 2. Install Cython Dependencies
       - name: Install Cython dependencies
         run: |
-          python3 -m pip install --upgrade pip setuptools wheel rospy catkin-tools
-          python3 -m cython --version
-          python3 -m pip install --upgrade pip cython
+          python3 -m venv ~/myvenv
+          source ~/myvenv/bin/activate
+          pip install --upgrade pip setuptools wheel cython rospy catkin-tools
+
+#          python3 -m pip install --upgrade pip setuptools wheel
+#          python3 -m cython --version
+#          python3 -m pip install --upgrade pip cython
 
       # 3. Build and Install CogUtil
       - name: Build and Install CogUtil
