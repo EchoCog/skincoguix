@@ -1,6 +1,6 @@
-# .github/workflows/ci-org-v7.yml
+# .github/workflows/ci-org-v7a.yml
 
-name: CI Org v7
+name: CI Org v7a
 
 on:
   push:
@@ -10,9 +10,13 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   CCACHE_DIR: /ws/ccache
-  MAKEFLAGS: -j2
+  MAKEFLAGS: -j$(nproc)
 
 jobs:
   build-and-test:
@@ -23,7 +27,7 @@ jobs:
       options: --user root
       env:
         CCACHE_DIR: /ws/ccache
-        MAKEFLAGS: -j2
+        MAKEFLAGS: -j$(nproc)
     services:
       opencog-postgres:
         image: opencog/postgres
@@ -39,15 +43,24 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      # 1. Checkout the Repository
+      # 0. Checkout the Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Install Build Dependencies
+      # 1. Install Build Dependencies
       - name: Install Build Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ccache pkg-config cmake build-essential git
+          sudo apt-get install -y ccache pkg-config cmake build-essential git guile-3.0-dev valgrind doxygen graphviz
+          sudo apt-get install -y libboost-all-dev librocksdb-dev liboctomap-dev libcpprest-dev libssl-dev liboctomap-dev
+          sudo apt-get install -y python3 python3-dev python3-pip python3-nose python3-rospy python3-catkin-tools cython3
+
+      # 2. Install Cython Dependencies
+      - name: Install Cython dependencies
+        run: |
+          python3 -m pip install --upgrade pip setuptools wheel
+          python3 -m cython --version
+          python3 -m pip install --upgrade pip cython
 
       # 3. Build and Install CogUtil
       - name: Build and Install CogUtil
@@ -56,7 +69,7 @@ jobs:
           mkdir -p repos/cogutil/build
           cd repos/cogutil/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -68,7 +81,7 @@ jobs:
           mkdir -p repos/atomspace/build
           cd repos/atomspace/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -80,7 +93,7 @@ jobs:
           mkdir -p repos/cogserver/build
           cd repos/cogserver/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -92,7 +105,7 @@ jobs:
           mkdir -p repos/opencog/build
           cd repos/opencog/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -104,7 +117,7 @@ jobs:
           mkdir -p repos/asmoses/build
           cd repos/asmoses/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -116,7 +129,7 @@ jobs:
           mkdir -p repos/ure/build
           cd repos/ure/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -128,7 +141,7 @@ jobs:
           mkdir -p repos/unify/build
           cd repos/unify/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -140,7 +153,7 @@ jobs:
           mkdir -p repos/attention/build
           cd repos/attention/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
@@ -152,7 +165,7 @@ jobs:
           mkdir -p repos/miner/build
           cd repos/miner/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j2
+          make -j$(nproc)
           sudo make install
           sudo ldconfig
           cd ../../..
