@@ -71,6 +71,7 @@ jobs:
           python3 -m venv ~/myvenv
           source ~/myvenv/bin/activate
           pip install --upgrade pip setuptools wheel cython rospy catkin-tools
+        shell: bash
 
 #          python3 -m pip install --upgrade pip setuptools wheel
 #          python3 -m cython --version
