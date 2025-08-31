@@ -330,17 +330,17 @@ jobs:
           cd ../../..
 
       # 21. Build and Install koboldcpp
-      - name: Build and Install koboldcpp
-        run: |
-          cd repos/koboldcpp
-          mkdir -p lib
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          make -j$(nproc)
-          sudo make install
-          sudo ldconfig
-          cd ../../..
+#      - name: Build and Install koboldcpp
+#        run: |
+#          cd repos/koboldcpp
+#          mkdir -p lib
+#          mkdir -p build
+#          cd build
+#          cmake .. -DCMAKE_BUILD_TYPE=Release
+#          make -j$(nproc)
+#          sudo make install
+#          sudo ldconfig
+#          cd ../../..
 
       # (Optional) Package Components
 #      - name: Package Components
