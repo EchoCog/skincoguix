@@ -2,6 +2,8 @@
 # Test script for Guix Shepherd devcontainer integration
 
 # Note: Using explicit error handling instead of set -e for comprehensive testing
+# Don't exit on first error - we want to run all tests
+# set +e
 
 echo "🧪 Testing Guix Shepherd devcontainer setup..."
 
@@ -164,7 +166,7 @@ main() {
     local tests_passed=0
     local tests_failed=0
     
-    # Run each test
+    # Run each test and capture results
     for test_func in test_devcontainer_files test_opencog_package test_shepherd_config test_base_devcontainers test_scheme_syntax; do
         echo ""
         if $test_func; then

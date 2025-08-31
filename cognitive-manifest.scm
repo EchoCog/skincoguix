@@ -8,21 +8,33 @@
     "make"
     "pkg-config"
     
-    ;; Development dependencies
+    ;; Development dependencies  
     "guile"
     "guile-dev"
     "python"
     "python-pip"
     
-    ;; Cognitive framework dependencies
+    ;; Build dependencies for OpenCog
+    "boost"
+    "cxxtest" 
+    "valgrind"
+    "doxygen"
+    "graphviz"
+    
+    ;; System utilities
     "git"
     "curl"
     "wget"
+    "tar"
+    "gzip"
     
-    ;; OpenCog dependencies
-    "boost"
-    "cxxtest"
+    ;; Additional OpenCog dependencies
+    "cython"
+    "postgresql"
     
     ;; Meta-cognitive tools
     "emacs"
-    "vim"))
+    "vim"
+    
+    ;; Guix/Shepherd integration
+    "shepherd"))
