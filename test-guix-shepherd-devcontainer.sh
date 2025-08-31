@@ -1,7 +1,7 @@
 #!/bin/bash
 # Test script for Guix Shepherd devcontainer integration
 
-set -e
+# Note: Using explicit error handling instead of set -e for comprehensive testing
 
 echo "🧪 Testing Guix Shepherd devcontainer setup..."
 
