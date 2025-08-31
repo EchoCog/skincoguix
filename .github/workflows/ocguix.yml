@@ -1,0 +1,479 @@
+# .github/workflows/ocg.yml
+# Workflow for building and installing OpenCog components
+
+name: OCG
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CCACHE_DIR: /ws/ccache
+  MAKEFLAGS: -j$(nproc)
+
+jobs:
+  build-and-test:
+    name: Build and Test All Components
+    runs-on: ubuntu-latest
+    container:
+      image: opencog/opencog-deps
+      options: --user root
+      env:
+        CCACHE_DIR: /ws/ccache
+        MAKEFLAGS: -j$(nproc)
+    services:
+      opencog-postgres:
+        image: opencog/postgres
+        env:
+          POSTGRES_USER: opencog_test
+          POSTGRES_PASSWORD: cheese
+          POSTGRES_DB: atomspace_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      # Checkout the Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Fix Git Ownership Issue
+      - name: Set Git Safe Directory
+        run: |
+          git config --global --add safe.directory ${{ github.workspace }}
+          git config --global --add safe.directory /__w/skincoguix/skincoguix
+
+      # Setup Guix Environment
+      - name: Setup Guix Environment
+        run: |
+          # Install Guix for reproducible builds (non-interactive)
+          wget https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh
+          chmod +x guix-install.sh
+          yes "" | sudo ./guix-install.sh
+          export PATH="/var/guix/profiles/per-user/root/current-guix/bin:$PATH"
+          guix --version || echo "Guix installation in progress..."
+
+      # 1. Install Build Dependencies
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ccache pkg-config cmake build-essential git guile-3.0-dev valgrind doxygen graphviz
+          sudo apt-get update
+          sudo apt-get install -y libboost-all-dev librocksdb-dev liboctomap-dev libcpprest-dev libssl-dev liboctomap-dev
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-dev python3.12-dev python3-pip python3-venv python3-nose cython3
+          sudo apt-get update
+          sudo apt-get install -y gnupg gnupg-l10n gnupg-utils gpg-wks-client gpgsm keyboxd
+          sudo apt-get update
+          sudo apt-get install -y curl lsb-release
+#          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
+#          sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+#          sudo apt-get update
+#          sudo apt-get install -y python3-rospy python3-catkin-tools
+
+      # 2. Install Cython Dependencies
+      - name: Install Cython dependencies
+        run: |
+          python3 -m venv ~/myvenv
+          source ~/myvenv/bin/activate
+          pip install --upgrade pip setuptools wheel cython
+        shell: bash
+#          pip install --upgrade pip setuptools wheel cython rospy catkin-tools
+#        shell: bash
+
+#          python3 -m pip install --upgrade pip setuptools wheel
+#          python3 -m cython --version
+#          python3 -m pip install --upgrade pip cython
+
+      # 02. Build and Install cogutil
+      - name: Build and Install cogutil
+        run: |
+          cd repos/cogutil
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 03. Build and Install atomspace
+      - name: Build and Install atomspace
+        run: |
+          cd repos/atomspace
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 04. Build and Install atomSpace-storage
+      - name: Build and Install atomSpace-storage
+        run: |
+          cd repos/atomspace-storage
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 05. Build and Install atomspace-rocks
+      - name: Build and Install atomspace-rocks
+        run: |
+          cd repos/atomspace-rocks
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 06. Build and Install atomspace-restful
+      - name: Build and Install atomspace-restful
+        run: |
+          cd repos/atomspace-restful
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 07. Build and Install cogserver
+      - name: Build and Install cogserver
+        run: |
+          cd repos/cogserver
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 08. Build and Install unify
+      - name: Build and Install unify
+        run: |
+          cd repos/unify
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 09. Build and Install ure
+      - name: Build and Install ure
+        run: |
+          cd repos/ure
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 10. Build and Install spacetime
+      - name: Build and Install spacetime
+        run: |
+          cd repos/spacetime
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 11. Build and Install attention
+      - name: Build and Install attention
+        run: |
+          cd repos/attention
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 12. Build and Install miner
+      - name: Build and Install miner
+        run: |
+          cd repos/miner
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 13. Build and Install pln
+      - name: Build and Install pln
+        run: |
+          cd repos/pln
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 14. Build and Install moses
+#      - name: Build and Install moses
+#        run: |
+#          cd repos/moses
+#          mkdir -p lib
+#          mkdir -p build
+#          cd build
+#          cmake .. -DCMAKE_BUILD_TYPE=Release
+#          make -j$(nproc)
+#          sudo make install
+#          sudo ldconfig
+#          cd ../../..
+
+      # 15. Build and Install asmoses
+      - name: Build and Install asmoses
+        run: |
+          cd repos/asmoses
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 16. Build and Install lg-atomese
+      - name: Build and Install lg-atomese
+        run: |
+          cd repos/lg-atomese
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 17. Build and Install learn
+      - name: Build and Install learn
+        run: |
+          cd repos/learn
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 18. Build and Install pattern-index
+#      - name: Build and Install pattern-index
+#        run: |
+#          cd repos/pattern-index
+#          mkdir -p lib
+#          mkdir -p build
+#          cd build
+#          cmake .. -DCMAKE_BUILD_TYPE=Release
+#          make -j$(nproc)
+#          sudo make install
+#          sudo ldconfig
+#          cd ../../..
+
+      # 19. Build and Install vision
+      - name: Build and Install vision
+        run: |
+          cd repos/vision
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 20. Build and Install opencog
+      - name: Build and Install opencog
+        run: |
+          cd repos/opencog
+          mkdir -p lib
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 21. Build and Install koboldcpp
+#      - name: Build and Install koboldcpp
+#        run: |
+#          cd repos/koboldcpp
+#          mkdir -p lib
+#          mkdir -p build
+#          cd build
+#          cmake .. -DCMAKE_BUILD_TYPE=Release
+#          make -j$(nproc)
+#          sudo make install
+#          sudo ldconfig
+#          cd ../../..
+
+      # (Optional) Package Components
+#      - name: Package Components
+#        if: github.ref == 'refs/heads/main'
+#        run: |
+          # cogutil Packaging
+#          cd repos/cogutil/build
+#          make package || echo "cogutil package target not defined."
+#          cd ../../..
+
+          # atomspace Packaging
+#          cd repos/atomspace/build
+#          make package || echo "atomspace package target not defined."
+#          cd ../../..
+
+          # atomspace-storage Packaging
+ #         cd repos/atomspace-storage/build
+ #         make package || echo "atomspace-storage package target not defined."
+ #         cd ../../..
+
+          # atomspace-rocks Packaging
+ #         cd repos/atomspace-rocks/build
+ #         make package || echo "atomspace-rocks package target not defined."
+ #         cd ../../..
+
+          # atomspace-restful Packaging
+#          cd repos/atomspace-restful/build
+#          make package || echo "atomspace-restful package target not defined."
+#          cd ../../..
+
+          # cogserver Packaging
+#          cd repos/cogserver/build
+#          make package || echo "cogserver package target not defined."
+#          cd ../../..
+
+          # unify Packaging
+#          cd repos/unify/build
+#          make package || echo "unify package target not defined."
+#          cd ../../..
+
+          # ure Packaging
+#          cd repos/ure/build
+#          make package || echo "ure package target not defined."
+#          cd ../../..
+
+          # spacetime Packaging
+#          cd repos/spacetime/build
+#          make package || echo "spacetime package target not defined."
+#          cd ../../..
+
+          # attention Packaging
+#          cd repos/attention/build
+#          make package || echo "attention package target not defined."
+#          cd ../../..
+
+          # miner Packaging
+#          cd repos/miner/build
+#          make package || echo "miner package target not defined."
+#          cd ../../..
+
+          # pln Packaging
+#          cd repos/pln/build
+#          make package || echo "pln package target not defined."
+#          cd ../../..
+
+          # moses Packaging
+#          cd repos/moses/build
+#          make package || echo "moses package target not defined."
+#          cd ../../..
+
+          # asmoses Packaging
+#          cd repos/asmoses/build
+#          make package || echo "asmoses package target not defined."
+#          cd ../../..
+
+          # lg-atomese Packaging
+#          cd repos/lg-atomese/build
+#          make package || echo "lg-atomese package target not defined."
+#          cd ../../..
+
+          # learn Packaging
+#          cd repos/learn/build
+#          make package || echo "learn package target not defined."
+#          cd ../../..
+
+          # pattern-index Packaging
+#          cd repos/pattern-index/build
+#          make package || echo "pattern-index package target not defined."
+#          cd ../../..
+
+          # vision Packaging
+#          cd repos/vision/build
+#          make package || echo "vision package target not defined."
+#          cd ../../..
+
+          # opencog Packaging
+#          cd repos/opencog/build
+#          make package || echo "opencog package target not defined."
+#          cd ../../..
+
+      # Upload Build Artifacts
+#      - name: Upload Build Artifacts
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: build-artifacts
+#          path: |
+#            repos/cogutil/build/
+#            repos/atomspace/build/
+#            repos/atomspace-storage/build/
+#            repos/atomspace-rocks/build/
+#            repos/atomspace-restful/build/
+#            repos/cogserver/build/
+#            repos/unify/build/
+#            repos/ure/build/
+#            repos/spacetime/build/
+#            repos/attention/build/
+#            repos/miner/build/
+#            repos/pln/build/
+#            repos/moses/build/
+#            repos/asmoses/build/
+#            repos/lg-atomese/build/
+#            repos/learn/build/
+#            repos/pattern-index/build/
+#            repos/vision/build/
+#            repos/opencog/build/
