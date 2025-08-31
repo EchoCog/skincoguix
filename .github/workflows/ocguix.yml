@@ -119,8 +119,17 @@ jobs:
       - name: Setup Local PostgreSQL with Root Access
         run: |
           echo "🗄️ Setting up PostgreSQL..."
+          
+          # Prevent systemd services from starting during package installation (container-compatible)
+          export DEBIAN_FRONTEND=noninteractive
+          echo "exit 101" | sudo tee /usr/sbin/policy-rc.d > /dev/null
+          sudo chmod +x /usr/sbin/policy-rc.d
+          
           sudo apt-get update
           sudo apt-get install -y postgresql postgresql-contrib
+          
+          # Remove the policy that prevents service starts
+          sudo rm -f /usr/sbin/policy-rc.d
           
           # Start PostgreSQL manually instead of using systemctl (container-compatible)
           sudo pg_ctlcluster 16 main start || sudo service postgresql start || true
