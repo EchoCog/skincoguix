@@ -48,48 +48,39 @@ jobs:
       - name: Set Git Safe Directory
         run: |
           git config --global --add safe.directory ${{ github.workspace }}
-          git config --global --add safe.directory /__w/ocguix/ocguix
+          git config --global --add safe.directory /__w/skincoguix/skincoguix
 
-      # 01. Install Build Dependencies including Valgrind
+      # 1. Install Build Dependencies
       - name: Install Build Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ccache pkg-config cmake build-essential git valgrind
+          sudo apt-get install -y ccache pkg-config cmake build-essential git guile-3.0-dev valgrind doxygen graphviz
           sudo apt-get update
-          sudo apt-get install -y curl gnupg lsb-release
+          sudo apt-get install -y libboost-all-dev librocksdb-dev liboctomap-dev libcpprest-dev libssl-dev liboctomap-dev
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-dev python3.12-dev python3-pip python3-venv python3-nose cython3
+          sudo apt-get update
+          sudo apt-get install -y gnupg gnupg-l10n gnupg-utils gpg-wks-client gpgsm keyboxd
+          sudo apt-get update
+          sudo apt-get install -y curl lsb-release
 #          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | apt-key add -
 #          sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-#          sudo apt update
-#          sudo apt install python3-rospy python3-catkin-tools
+#          sudo apt-get update
+#          sudo apt-get install -y python3-rospy python3-catkin-tools
 
-      - name: Update Dependencies
-        run: sudo apt-get update
-
-      - name: Install Build tools
-        run: sudo apt-get install -y build-essential cmake debhelper fakeroot
-
-      - name: Install Boost and other libraries
-        run: sudo apt-get install -y libboost-all-dev librocksdb-dev libcpprest-dev libssl-dev liboctomap-dev
-
-      - name: Install Documentation and testing
-        run: sudo apt-get install -y valgrind doxygen graphviz
-
-      - name: Install Scheme support
-        run: sudo apt-get install -y guile-3.0-dev
-
-      - name: Install Python-related
-        run: sudo apt-get install -y python3 python3-dev python3-pip python3-nose cython3 # python3-rospy python3-catkin-tools
-
-      - name: Install Python dependencies
+      # 2. Install Cython Dependencies
+      - name: Install Cython dependencies
         run: |
-          python3 -m pip install --upgrade pip setuptools wheel
-          python3 -m pip install cython
+          python3 -m venv ~/myvenv
+          source ~/myvenv/bin/activate
+          pip install --upgrade pip setuptools wheel cython
+        shell: bash
+#          pip install --upgrade pip setuptools wheel cython rospy catkin-tools
+#        shell: bash
 
-#      - name: Install Cython
-#        run: python3 -m pip install --upgrade pip cython
-
-#      - name: Verify Cython Installation
-#        run: python3 -m cython --version
+#          python3 -m pip install --upgrade pip setuptools wheel
+#          python3 -m cython --version
+#          python3 -m pip install --upgrade pip cython
 
       # 02. Build and Install cogutil
       - name: Build and Install cogutil
