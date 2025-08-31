@@ -28,6 +28,8 @@ Added git safe.directory configuration in the workflow:
 
 **Files Modified**: 
 - `.github/workflows/oc.yml`
+- `.github/workflows/ci-org-v7a.yml`
+- `.github/workflows/efficient-build.yml`
 
 ### 2. Valgrind Not Found Error
 
@@ -91,15 +93,62 @@ The workflow already uses the correct database configuration:
 
 This ensures the database uses the `opencog_test` user instead of `root`.
 
+### 5. Missing Python Development Headers
+
+**Problem**: 
+```
+Cython compilation failures due to missing Python development headers
+```
+
+**Root Cause**: 
+Python development headers (python3-dev and python3.12-dev) were not installed before Cython build, causing compilation errors in Python extension modules.
+
+**Solution**: 
+Added python3.12-dev to the dependency installation alongside python3-dev:
+
+```yaml
+- name: Install Build Dependencies
+  run: |
+    sudo apt-get install -y python3 python3-dev python3.12-dev python3-pip python3-venv python3-nose cython3
+```
+
+For conda-based workflows, added python-dev package:
+
+```yaml
+conda install -y -c conda-forge \
+  cmake \
+  boost-cpp \
+  python \
+  python-dev \
+  cython \
+  pkg-config
+```
+
+**Files Modified**: 
+- `.github/workflows/ci-org-v7a.yml`
+- `.github/workflows/efficient-build.yml`
+- `ocpkg` (installation script)
+
 ## Implementation Details
 
 ### Workflow Changes
 
-The main workflow file `.github/workflows/oc.yml` was updated with:
+The workflow files have been updated with comprehensive fixes:
 
+**`.github/workflows/oc.yml`** (already had fixes):
 1. **Git Safe Directory Configuration**: Added immediately after checkout to prevent ownership issues
 2. **Valgrind Installation**: Added to the build dependencies step
 3. **Proper Error Handling**: Maintained existing error handling patterns
+
+**`.github/workflows/ci-org-v7a.yml`** (newly fixed):
+1. **Git Safe Directory Configuration**: Added after checkout step
+2. **Python Development Headers**: Added python3.12-dev to dependency installation
+3. **Database Configuration**: Already properly configured with opencog_test user
+
+**`.github/workflows/efficient-build.yml`** (newly fixed):
+1. **Git Safe Directory Configuration**: Added to all checkout jobs (setup-dependencies, build-foundation, build-failing-components, integration-test)
+2. **Python Development Headers**: Added python-dev to conda installation
+3. **Conda-based Dependencies**: Using conda for faster, more reliable package management
 
 ### Code Changes
 
@@ -205,10 +254,16 @@ psql -h localhost -U opencog_test -d atomspace_db
 
 ## Conclusion
 
-These fixes address the core issues causing CI build failures:
-- Git ownership problems resolved with safe.directory configuration
+These fixes address the core issues causing CI build failures across multiple workflows:
+- Git ownership problems resolved with safe.directory configuration in all affected workflows
+- Python development headers ensured with python3-dev and python3.12-dev installation
 - Valgrind dependency issue fixed with proper installation
 - Compilation error resolved with missing include
-- Database configuration already properly set up
+- Database configuration already properly set up with opencog_test user
 
-The workflow should now build successfully across all components. Monitor the builds and update this documentation if new issues arise.
+**Workflows Fixed**:
+- `.github/workflows/oc.yml` (already had fixes)
+- `.github/workflows/ci-org-v7a.yml` (newly fixed)
+- `.github/workflows/efficient-build.yml` (newly fixed - includes Moses build)
+
+The workflows should now build successfully across all components, including the Moses component that was failing at 98% completion. Monitor the builds and update this documentation if new issues arise.
