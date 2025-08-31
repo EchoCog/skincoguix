@@ -101,7 +101,7 @@ echo "🛠️  3. SHEPHERD SERVICE VALIDATION"
 echo "=================================="
 
 test_start "Validating Shepherd configuration syntax"
-if guile -c "(use-modules (shepherd service)) (load \".config/shepherd/init.scm\")" 2>/dev/null; then
+if guile .config/shepherd/init.scm 2>/dev/null; then
     test_pass "Shepherd configuration syntax is valid"
 else
     test_fail "Shepherd configuration has syntax errors"
