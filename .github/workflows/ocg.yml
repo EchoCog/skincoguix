@@ -291,17 +291,17 @@ jobs:
           cd ../../..
 
       # 18. Build and Install pattern-index
-      - name: Build and Install pattern-index
-        run: |
-          cd repos/pattern-index
-          mkdir -p lib
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          make -j$(nproc)
-          sudo make install
-          sudo ldconfig
-          cd ../../..
+#      - name: Build and Install pattern-index
+#        run: |
+#          cd repos/pattern-index
+#          mkdir -p lib
+#          mkdir -p build
+#          cd build
+#          cmake .. -DCMAKE_BUILD_TYPE=Release
+#          make -j$(nproc)
+#          sudo make install
+#          sudo ldconfig
+#          cd ../../..
 
       # 19. Build and Install vision
       - name: Build and Install vision
