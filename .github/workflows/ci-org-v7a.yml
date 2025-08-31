@@ -70,8 +70,10 @@ jobs:
         run: |
           python3 -m venv ~/myvenv
           source ~/myvenv/bin/activate
-          pip install --upgrade pip setuptools wheel cython rospy catkin-tools
+          pip install --upgrade pip setuptools wheel cython
         shell: bash
+#          pip install --upgrade pip setuptools wheel cython rospy catkin-tools
+#        shell: bash
 
 #          python3 -m pip install --upgrade pip setuptools wheel
 #          python3 -m cython --version
@@ -101,6 +103,30 @@ jobs:
           sudo ldconfig
           cd ../../..
 
+      # 4. Build and Install AtomSpace Storage
+      - name: Build and Install AtomSpace Storage
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/atomspace-storage/build
+          cd repos/atomspace-storage/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 4. Build and Install AtomSpace Rocks
+      - name: Build and Install AtomSpace Rocks
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/atomspace-rocks/build
+          cd repos/atomspace-rocks/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
       # 5. Build and Install CogServer
       - name: Build and Install CogServer
         run: |
@@ -113,12 +139,12 @@ jobs:
           sudo ldconfig
           cd ../../..
 
-      # 6. Build and Install OpenCog
-      - name: Build and Install OpenCog
+      # 7. Build and Install MoSES
+      - name: Build and Install MoSES
         run: |
           # Use local repository from monorepo
-          mkdir -p repos/opencog/build
-          cd repos/opencog/build
+          mkdir -p repos/moses/build
+          cd repos/moses/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
           make -j$(nproc)
           sudo make install
@@ -137,24 +163,24 @@ jobs:
           sudo ldconfig
           cd ../../..
 
-      # 8. Build and Install URE
-      - name: Build and Install URE
-        run: |
-          # Use local repository from monorepo
-          mkdir -p repos/ure/build
-          cd repos/ure/build
-          cmake -DCMAKE_BUILD_TYPE=Release ..
-          make -j$(nproc)
-          sudo make install
-          sudo ldconfig
-          cd ../../..
-
       # 9. Build and Install Unify
       - name: Build and Install Unify
         run: |
           # Use local repository from monorepo
           mkdir -p repos/unify/build
           cd repos/unify/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 8. Build and Install URE
+      - name: Build and Install URE
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/ure/build
+          cd repos/ure/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
           make -j$(nproc)
           sudo make install
@@ -173,12 +199,84 @@ jobs:
           sudo ldconfig
           cd ../../..
 
+      # 10. Build and Install SpaceTime
+      - name: Build and Install SpaceTime
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/spacetime/build
+          cd repos/spacetime/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
       # 11. Build and Install Miner
       - name: Build and Install Miner
         run: |
           # Use local repository from monorepo
           mkdir -p repos/miner/build
           cd repos/miner/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 8. Build and Install PLN
+      - name: Build and Install PLN
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/pln/build
+          cd repos/pln/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 6. Build and Install LG Atomese
+      - name: Build and Install LG Atomese
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/lg-atomese/build
+          cd repos/lg-atomese/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 6. Build and Install Link Grammar
+      - name: Build and Install Link Grammar
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/link-grammar/build
+          cd repos/link-grammar/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 6. Build and Install Learn
+      - name: Build and Install Learn
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/learn/build
+          cd repos/learn/build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          cd ../../..
+
+      # 6. Build and Install OpenCog
+      - name: Build and Install OpenCog
+        run: |
+          # Use local repository from monorepo
+          mkdir -p repos/opencog/build
+          cd repos/opencog/build
           cmake -DCMAKE_BUILD_TYPE=Release ..
           make -j$(nproc)
           sudo make install
