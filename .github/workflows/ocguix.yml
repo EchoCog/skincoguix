@@ -121,9 +121,22 @@ jobs:
           echo "🗄️ Setting up PostgreSQL..."
           sudo apt-get update
           sudo apt-get install -y postgresql postgresql-contrib
-          sudo systemctl start postgresql
+          
+          # Start PostgreSQL manually instead of using systemctl (container-compatible)
+          sudo pg_ctlcluster 16 main start || sudo service postgresql start || true
+          
+          # Wait for PostgreSQL to be ready
+          timeout 30s bash -c 'until pg_isready -U postgres; do sleep 1; done' || true
+          
+          # Create database users
           sudo -u postgres createuser --superuser opencog_test || true
           sudo -u postgres psql -c "ALTER USER opencog_test PASSWORD 'cheese';" || true
+          
+          # Create root role that some services expect
+          sudo -u postgres createuser --superuser root || true
+          sudo -u postgres psql -c "ALTER USER root PASSWORD 'cheese';" || true
+          
+          # Create database
           sudo -u postgres createdb atomspace_db -O opencog_test || true
 
       # Clone Missing OpenCog Repositories 
