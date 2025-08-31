@@ -267,3 +267,38 @@ These fixes address the core issues causing CI build failures across multiple wo
 - `.github/workflows/efficient-build.yml` (newly fixed - includes Moses build)
 
 The workflows should now build successfully across all components, including the Moses component that was failing at 98% completion. Monitor the builds and update this documentation if new issues arise.
+
+## Enhanced Validation with test-ci-fixes.sh
+
+The `test-ci-fixes.sh` script has been enhanced to provide comprehensive validation of both CI build fixes AND GNU Guix & Shepherd package processing compatibility. The enhanced validation covers:
+
+### Core CI Fixes
+- Git safe directory configuration across all workflows
+- Python development headers installation
+- Database configuration with opencog_test user
+- YAML syntax validation
+- Documentation updates
+
+### GNU Guix & Shepherd Package Validation
+- **Guix Package Definitions**: Validates `guix.scm` and `opencog.scm` package definitions
+- **Cognitive Manifest**: Checks `cognitive-manifest.scm` for essential dependencies
+- **Shepherd Services**: Validates `.config/shepherd/init.scm` service definitions
+- **DevContainer Integration**: Checks Guix/Shepherd devcontainer configuration
+- **CI Workflow Compatibility**: Ensures workflows are compatible with Guix environments
+- **Package Syntax**: Validates Scheme syntax of package definitions (when Guile available)
+- **Dependency Compatibility**: Verifies package dependencies are properly configured
+
+### Usage
+```bash
+# Run comprehensive validation
+./test-ci-fixes.sh
+
+# The script will validate:
+# ✅ All CI build fixes are properly implemented
+# ✅ GNU Guix package definitions are valid
+# ✅ Shepherd services are properly configured
+# ✅ DevContainer setup supports Guix/Shepherd
+# ✅ CI workflows are compatible with Guix package management
+```
+
+This enhanced validation ensures that each job and build step are correctly processed by GNU Guix & Shepherd as packages, addressing the requirements in issue #35.
