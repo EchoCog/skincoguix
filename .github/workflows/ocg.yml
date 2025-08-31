@@ -239,17 +239,17 @@ jobs:
           cd ../../..
 
       # 14. Build and Install moses
-      - name: Build and Install moses
-        run: |
-          cd repos/moses
-          mkdir -p lib
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          make -j$(nproc)
-          sudo make install
-          sudo ldconfig
-          cd ../../..
+#      - name: Build and Install moses
+#        run: |
+#          cd repos/moses
+#          mkdir -p lib
+#          mkdir -p build
+#          cd build
+#          cmake .. -DCMAKE_BUILD_TYPE=Release
+#          make -j$(nproc)
+#          sudo make install
+#          sudo ldconfig
+#          cd ../../..
 
       # 15. Build and Install asmoses
       - name: Build and Install asmoses
