@@ -1,6 +1,25 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": {
-    "ghcr.io/devcontainers-extra/features/cmake:1": {}
-  }
+  "name": "Guix Shepherd OpenCog Packaging",
+  "build": { 
+    "dockerfile": "Dockerfile" 
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "postCreateCommand": "guix pull && guix install shepherd guile",
+  "customizations": { 
+    "vscode": { 
+      "extensions": [
+        "ms-vscode.scheme",
+        "ms-vscode.makefile-tools"
+      ] 
+    } 
+  },
+  "forwardPorts": [8080, 9000],
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "remoteUser": "root",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "workspaceFolder": "/workspace"
 }
