@@ -252,6 +252,45 @@ cmake --find-package -DNAME=VALGRIND -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXI
 psql -h localhost -U opencog_test -d atomspace_db
 ```
 
+## Validation Scripts
+
+Two validation scripts are provided to verify that the CI fixes are properly implemented and working:
+
+### `test-ci-fixes.sh`
+Tests that CI build fixes are properly implemented in the workflow files and configuration.
+
+**Usage**:
+```bash
+./test-ci-fixes.sh
+```
+
+**Tests performed**:
+- Git safe.directory configuration in all workflow files
+- Python development headers installation in workflows and scripts
+- Database configuration with opencog_test user
+- YAML syntax validation for workflow files
+- Documentation updates verification
+
+### `validate-ci-fixes.sh`
+Validates that the fixes are working correctly in the current environment.
+
+**Usage**:
+```bash
+./validate-ci-fixes.sh
+```
+
+**Tests performed**:
+- Git safe.directory configuration in current environment
+- Valgrind availability
+- Required include files presence
+- Workflow file fixes implementation
+- Database configuration
+- Issue template and documentation existence
+
+**Expected Results**:
+- `test-ci-fixes.sh` should pass all tests when workflow files are properly configured
+- `validate-ci-fixes.sh` may show warnings for missing system dependencies (expected in some environments)
+
 ## Conclusion
 
 These fixes address the core issues causing CI build failures across multiple workflows:

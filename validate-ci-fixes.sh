@@ -14,16 +14,24 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# Counters for test results
+PASS_COUNT=0
+FAIL_COUNT=0
+WARN_COUNT=0
+
 # Function to print colored output
 print_status() {
     local status=$1
     local message=$2
     if [ "$status" = "PASS" ]; then
         echo -e "${GREEN}✅ PASS${NC}: $message"
+        PASS_COUNT=$((PASS_COUNT + 1))
     elif [ "$status" = "FAIL" ]; then
         echo -e "${RED}❌ FAIL${NC}: $message"
+        FAIL_COUNT=$((FAIL_COUNT + 1))
     else
         echo -e "${YELLOW}⚠️  WARN${NC}: $message"
+        WARN_COUNT=$((WARN_COUNT + 1))
     fi
 }
 
@@ -113,16 +121,11 @@ echo "=================================="
 echo "📊 Validation Summary:"
 echo "=================================="
 
-# Count passes and fails
-passes=$(grep -c "✅ PASS" <<< "$(tail -n +1)")
-fails=$(grep -c "❌ FAIL" <<< "$(tail -n +1)")
-warns=$(grep -c "⚠️  WARN" <<< "$(tail -n +1)")
+echo "✅ Passes: $PASS_COUNT"
+echo "❌ Fails: $FAIL_COUNT"
+echo "⚠️  Warnings: $WARN_COUNT"
 
-echo "✅ Passes: $passes"
-echo "❌ Fails: $fails"
-echo "⚠️  Warnings: $warns"
-
-if [ "$fails" -eq 0 ]; then
+if [ "$FAIL_COUNT" -eq 0 ]; then
     echo ""
     print_status "PASS" "All critical fixes are in place!"
     echo "   The CI build should now work correctly."
