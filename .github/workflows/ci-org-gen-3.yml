@@ -76,6 +76,7 @@ jobs:
 
       # 2. Setup Guix Environment
       - name: Setup Guix Environment
+        shell: bash
         run: |
           echo "🔧 Installing Guix for reproducible builds..."
           wget -q https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh
@@ -94,6 +95,7 @@ jobs:
 
       # 4. Setup Local PostgreSQL with Root Access
       - name: Setup Local PostgreSQL with Root Access
+        shell: bash
         run: |
           echo "🗄️ Setting up local PostgreSQL with full root access..."
           
@@ -252,6 +254,7 @@ jobs:
 
       # 6. Install Build Dependencies with Guix Integration
       - name: Install Build Dependencies
+        shell: bash
         run: |
           # Try to use Guix first, fall back to apt
           export PATH="/var/guix/profiles/per-user/root/current-guix/bin:$PATH"
@@ -311,6 +314,7 @@ jobs:
 
       # Build and Install cogutil (with Guix integration)
       - name: Build and Install cogutil
+        shell: bash
         run: |
           echo "🔨 Building cogutil with Guix integration..."
           export PATH="/var/guix/profiles/per-user/root/current-guix/bin:$PATH"
